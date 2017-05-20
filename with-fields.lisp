@@ -142,9 +142,10 @@
 
 (defun remove-separator(declares)
   (loop :for declare :in declares
-	:collect `(declare,@(loop :for option :in (cdr declare)
-				  :unless (string= 'separator (car option))
-				  :collect option))))
+	:for temp = (loop :for option :in (cdr declare)
+			  :unless (string= 'separator (car option))
+			  :collect option)
+	:when temp :collect `(DECLARE ,@temp)))
 
 (defvar *line*)
 

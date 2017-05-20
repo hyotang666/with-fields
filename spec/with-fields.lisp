@@ -460,6 +460,22 @@ average pay is 56.25"
 ;;;; Exceptional-Situations:
 
 ;;;; Examples:
+#?(let((path(probe-file "/proc/cpuinfo")))
+    (when path
+      (for-each-line((tag 0))path
+	(declare(separator #\:))
+	:when (uiop:string-prefix-p "processor" tag)
+	:count :it)))
+=> implementation-dependent ; <--- In particular, environment dependent, the number of cpu cores.
+
+#?(for-each-line((hrsworked 2 :key #'parse-integer))*file*
+    :when(zerop hrsworked)
+    :do (write-line *line*))
+:outputs
+"Beth    4.00    0
+Dan     3.75    0
+"
+
 #?(for-each-line((payrate 1 :key #'read-from-string)
 		 (hrsworked 2 :key #'read-from-string))
     *file*
