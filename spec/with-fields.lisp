@@ -103,7 +103,7 @@
 ; When index over the length of fields, var bound by nil.
 #?(with-fields((v 1))"foo"
     v)
-=> unspecified ; <--- NIL, but is error better?
+=> unspecified ; <--- NIL, but is error better? or empty string?
 
 ;;;; Exceptional-Situations:
 
