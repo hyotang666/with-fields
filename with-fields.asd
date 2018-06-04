@@ -7,6 +7,6 @@
                                                     "README.md"))
   :license "MIT"
   :components ((:file "with-fields")))
-;; Perform method below is added by JINGOH.GENERATOR.
-(defmethod perform ((o test-op) (c (eql (find-system "with-fields"))))
-  (test-system :with-fields.test))
+
+(defmethod component-depends-on ((o test-op) (c (eql (find-system "with-fields"))))
+  (append (call-next-method) '((test-op "with-fields.test"))))
