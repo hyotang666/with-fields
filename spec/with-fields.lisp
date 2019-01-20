@@ -177,8 +177,8 @@ three"
 
 ; input := input stream generate form, evaluated.
 ; otherwise error.
-#?(do-stream-fields((num 1))"foo 0"
-    (princ num))
+#?(do-stream-fields((var 1))"not input stream"
+    (princ var))
 :signals error
 ,:ignore-signals warning
 
