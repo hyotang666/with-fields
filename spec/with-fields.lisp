@@ -165,7 +165,7 @@ three"
 
 ; key := function which applied string.
 #?(do-stream-fields((num 1 :key #'read-from-string))*standard-input*
-    (princ num))
+    (prin1 num))
 :outputs "12"
 
 ; evaluated.
