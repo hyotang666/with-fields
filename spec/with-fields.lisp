@@ -8,7 +8,7 @@
 (requirements-about WITH-FIELDS)
 
 ;;;; Description:
-; binds var by character separated value line's specified index,
+; binds var by character separated value string's specified index,
 ; then evaluate body.
 #?(with-fields((s 1))"foo bar bazz"
     s)
@@ -104,6 +104,15 @@
 #?(with-fields((v 1))"foo"
     v)
 => unspecified ; <--- NIL, but is error better? or empty string?
+
+; INIT is string generate form, not `LINE` generate form.
+; #\Newline is included as field value.
+#?(with-fields((v 2))"zero one two
+three"
+    v)
+=> "two
+three"
+,:test string=
 
 ;;;; Exceptional-Situations:
 
