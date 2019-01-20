@@ -78,11 +78,7 @@ Less power, but easy to lean.
 
 ### License
 MIT
-### Developed with
-CLISP/2.49
 ### Tested with
-SBCL/1.3.17
-CCL/1.11
-ECL/16.1.3
+SBCL/1.4.15
 ## Installation
 
