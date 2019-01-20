@@ -29,10 +29,10 @@
 			  (list 'nth-fields ,(ecase n
 					       (1 'separator)
 					       (2 'string)
-					       ((3 4) 'indexies)
+					       ((3 4) 'indice)
 					       ))))))))
 
-  (defun nth-fields(string separator &rest indexies)
+  (defun nth-fields(string separator &rest indice)
     (! 2(check-type string string))
     (when(string= "" string)
       (return-from nth-fields nil))
@@ -41,7 +41,7 @@
       (when(! 1(char= #\space separator))
 	(setf string (trim string)))
       (do((max(length string))
-	  (sorted(! 4(sort(copy-list indexies)#'<))) ; keep order.
+	  (sorted(! 4(sort(copy-list indice)#'<))) ; keep order.
 	  (field-address 0)
 	  (start 0)
 	  (current 0 (1+ current))
@@ -51,7 +51,7 @@
 	       (if(= field-address(! 4 (the integer(car sorted))))
 		 (setf (gethash(car sorted)table)(trim(subseq string start)))
 		 T)))
-	 (loop :for key :in indexies
+	 (loop :for key :in indice
 	       :collect(gethash key table)))
 	(if(char= #\\ (schar string current))
 	  (incf current)
