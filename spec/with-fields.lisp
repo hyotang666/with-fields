@@ -140,7 +140,7 @@ three"
 :signals error
 
 ; not evaluated.
-#?(do-stream-fields((intern "VAR")0)*standard-input*
+#?(do-stream-fields(((intern "VAR")0))*standard-input*
     var)
 :signals error
 
