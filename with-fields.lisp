@@ -12,59 +12,52 @@
 
 (define-condition arg-error(simple-type-error)())
 
-(macrolet((!(n form)
-	    `(handler-case ,form
-	       (error(c)
-		 (if(or (not(typep c 'simple-condition))
-			(typep c 'arg-error))
-		   (error c)
-		   (error 'arg-error
-			  :format-control
-			  ,(ecase n
-			     (1 "~S: Separator must character, but ~S")
-			     (2 "~S: Second arguments must string, but ~S")
-			     (4 "~S: Indexes must non negative integer, but ~S")
-			     )
-			  :format-arguments
-			  (list 'nth-fields ,(ecase n
-					       (1 'separator)
-					       (2 'string)
-					       ((3 4) 'indice)
-					       ))))))))
+(declaim (ftype (function (string
+			    character
+			    &rest
+			    (mod #.most-positive-fixnum))
+			  list)
+		nth-fields))
 
-  (defun nth-fields(string separator &rest indice)
-    (! 2(check-type string string))
-    (when(string= "" string)
-      (return-from nth-fields nil))
-    (flet((trim(string)
-	    (string-trim '(#\space) string)))
-      (when(! 1(char= #\space separator))
-	(setf string (trim string)))
-      (do((max(length string))
-	  (sorted(! 4(sort(copy-list indice)#'<))) ; keep order.
-	  (field-address 0)
-	  (start 0)
-	  (current 0 (1+ current))
-	  (table(make-hash-table)))
-	((or (null sorted) ; all specified fields are collected.
-	     (when(= current max) ; exhaust string.
-	       (if(= field-address(! 4 (the integer(car sorted))))
-		 (setf (gethash(car sorted)table)(trim(subseq string start)))
-		 T)))
-	 (loop :for key :in indice
-	       :collect(gethash key table)))
-	(if(char= #\\ (schar string current))
-	  (incf current)
-	  (when(and (char= separator (schar string current))
-		    (not (and (char= #\space separator)
-			      (char= #\space (schar string (1- current))))))
-	    (if(= field-address (car sorted))
-	      (setf (gethash(car sorted)table)(trim(subseq string start current))
-		    sorted (cdr sorted)
-		    field-address (1+ field-address)
-		    start (1+ current))
-	      (setf field-address (1+ field-address)
-		    start (1+ current)))))))))
+(defun nth-fields(string separator &rest indice)
+  (declare(type string string))
+  (declare(optimize (speed 3)))
+  (declare(type character separator))
+  (check-type string string)
+  (when(equal "" string)
+    (return-from nth-fields nil))
+  (flet((trim(string)
+	  (string-trim '(#\space) string)))
+    (when(char= #\space separator)
+      (setf string (trim string)))
+    (do((max(length string))
+	(sorted(sort(copy-list indice)#'<)) ; keep order.
+	(field-address 0)
+	(start 0)
+	(current 0 (1+ current))
+	(table(make-hash-table)))
+      ((or (null sorted) ; all specified fields are collected.
+	   (when(= current max) ; exhaust string.
+	     (if(= field-address(the fixnum(car sorted)))
+	       (setf (gethash(car sorted)table)(trim(subseq string start)))
+	       T)))
+       (loop :for key :in indice
+	     :collect(gethash key table)))
+      (declare (type (mod #.most-positive-fixnum) max))
+      (declare (type fixnum field-address start current))
+      (declare (type hash-table table))
+      (if(char= #\\ (char string current))
+	(incf current)
+	(when(and (char= separator (char string current))
+		  (not (and (char= #\space separator)
+			    (char= #\space (char string (1- current))))))
+	  (if(= field-address (the fixnum(car sorted)))
+	    (setf (gethash(car sorted)table)(trim(subseq string start current))
+		  sorted (cdr sorted)
+		  field-address (1+ field-address)
+		  start (1+ current))
+	    (setf field-address (1+ field-address)
+		  start (1+ current))))))))
 
 (defmacro with-fields(binds init &body body)
   (check-binds binds)

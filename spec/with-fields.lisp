@@ -393,6 +393,7 @@ average pay is 56.25"
 ; string := string which separated by CHARACTER.
 ; When not string, an error is signaled.
 #?(nth-fields () #\space 0) :signals error
+,:lazy t
 ; When STRING is empty, NIL is returned.
 #?(nth-fields "" #\space 2) => NIL
 
